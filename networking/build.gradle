@@ -30,6 +30,8 @@ dependencies {
 
     implementation 'com.github.kittinunf.fuel:fuel-android:1.13.0' //for Android
 
+    implementation 'com.google.code.gson:gson:2.8.5'
+
     implementation "io.arrow-kt:arrow-core:$arw_version"
     implementation "io.arrow-kt:arrow-syntax:$arw_version"
     implementation "io.arrow-kt:arrow-typeclasses:$arw_version"
@@ -38,9 +40,7 @@ dependencies {
     implementation "io.arrow-kt:arrow-instances-data:$arw_version"
     implementation "io.arrow-kt:arrow-effects:$arw_version"
 
-    implementation 'com.google.code.gson:gson:2.8.5'
-
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
+    implementation 'com.beust:klaxon:3.0.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
@@ -48,4 +48,8 @@ dependencies {
 
     implementation project(':base')
 //    application project(':app')
+}
+
+repositories {
+    jcenter()
 }
