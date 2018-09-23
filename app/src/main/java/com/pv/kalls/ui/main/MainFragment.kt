@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.pv.kalls.R
+import com.pv.networking.Networking
 
 class MainFragment : Fragment() {
 
@@ -25,4 +26,10 @@ class MainFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        val a = Networking
+        a.test()
+    }
 }
