@@ -1,5 +1,9 @@
 package com.pv.networking
 
+import android.util.Log
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import com.beust.klaxon.Klaxon
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.httpGet
@@ -14,9 +18,9 @@ class Kalls(baseUrl: String) {
     }
 
     val apis = mutableMapOf<Any, String>()
-    val sss = mutableMapOf<String, Any>()
+    val sss = mutableMapOf<String, String>()
     val params = mutableMapOf<String, String>()
-    val ss = mutableSetOf<KClass<Any>>()
+
 
     init {
         FuelManager.instance.basePath = baseUrl
@@ -44,7 +48,7 @@ class Kalls(baseUrl: String) {
     }
 
     infix fun <T> Api<T>.referAs(string: String) {
-        sss[string] = this
+        sss[string] = this.ext
     }
 
     fun String.callback(string: String) {
@@ -62,6 +66,7 @@ class Kalls(baseUrl: String) {
     }
 
 /*    inline fun <reified T> call2(callback: (Pair<Boolean, T>) -> (Unit)) {
+        var ext = ""
         ext.httpGet().responseString { _, _, r ->
             r.fold({
                 val k = Klaxon().parse<T>(it)
@@ -73,8 +78,15 @@ class Kalls(baseUrl: String) {
         }
     }*/
 
-    fun makeKall() {
-
+    inline fun <reified T> makeKall(ref: String, crossinline callback: (Either<String,T>) -> Unit) {
+        sss[ref]?.let {
+            Log.d("pv", "request : $it")
+            it.httpGet().responseString { req, res, r ->
+                Klaxon().parse<T>(r.get())?.let { callback.invoke(it.right()) }
+            }
+        } ?: run {
+            callback.invoke("Not found".left())
+        }
     }
 
     operator fun String.invoke() {

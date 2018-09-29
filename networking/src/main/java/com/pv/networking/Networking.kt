@@ -2,6 +2,7 @@ package com.pv.networking
 
 import android.util.Log
 import com.pv.networking.Kalls.Companion.self
+import com.pv.networking.launch_return_model.LaunchReturnDataClass
 
 
 typealias launchFunCall = (LaunchReturn) -> Unit
@@ -10,7 +11,7 @@ object Networking {
 
     val api = kall ("https://launchlibrary.net/1.4/") {
 
-        "launch/next/n" <LaunchReturn> {
+        "/launch/next/n" <LaunchReturnDataClass> {
 
             params["n"] = "10"
 
@@ -22,7 +23,7 @@ object Networking {
 
         } referAs self
 
-        "missions" <MissionReturn> {
+        "/missions" <MissionReturn> {
 
 //            handleError = LaunchError
 
@@ -30,21 +31,20 @@ object Networking {
 
         val next5 = "launch/next/5" <LaunchReturn> {
 
-        }
-
-        fun a() = next5
-
-        next5 referAs "LSD"
+        } referAs "next five"
     }
 
     fun test() {
 
-        launchCall {
+        /*launchCall {
             Log.d("pv", "The string is $it")
+        }*/
+
+        api kall "next five"
+
+        api.makeKall<LaunchReturnDataClass>("next five") {
+            println("makeKall : $it")
         }
-
-        api kall "LSD"
-
       /*  launchCal {
 
         }

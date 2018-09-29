@@ -1,0 +1,32 @@
+package com.pv.networking.launch_return_model
+
+data class Launche(
+        val id: Int,
+        val name: String,
+        val windowstart: String,
+        val windowend: String,
+        val net: String,
+        val wsstamp: Int,
+        val westamp: Int,
+        val netstamp: Int,
+        val isostart: String,
+        val isoend: String,
+        val isonet: String,
+        val status: Int,
+        val inhold: Int,
+        val tbdtime: Int,
+        val vidURLs: List<Any>,
+        val vidURL: String?,
+        val infoURLs: List<String>?,
+        val infoURL: String?,
+        val holdreason: String?,
+        val failreason: String?,
+        val tbddate: Int,
+        val probability: Int,
+        val hashtag: String?,
+        val changed: String,
+        val location: Location,
+        val rocket: Rocket,
+        val missions: List<Mission>,
+        val lsp: Lsp
+)
