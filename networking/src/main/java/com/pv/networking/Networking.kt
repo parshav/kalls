@@ -8,7 +8,7 @@ typealias launchFunCall = (LaunchReturn) -> Unit
 
 object Networking {
 
-    val api = kall("https://api.spacexdata.com/v3/") {
+    val api = kall("https://api.spacexdata.com/v3") {
 
         "/launch/next/n"<Launch5> {
 
@@ -22,11 +22,11 @@ object Networking {
 
         } referAs self
 
-        "/history/1"<MissionReturn> {
+        "/history/1"<HistoryModel> {
 
             //            handleError = LaunchError
 
-        } referAs "main missions"
+        } referAs "spacex history"
 
         val next5 = "launch/next/5"<LaunchReturn> {
 
@@ -41,7 +41,7 @@ object Networking {
 
         api kall "next five"
 
-        api.makeKall<HistoryModel>("next five") {
+        api.makeKall<HistoryModel>("spacex history") {
             println("makeKall : $it")
         }
         /*  launchCal {

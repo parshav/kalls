@@ -81,7 +81,11 @@ class Kalls(baseUrl: String) {
         sss[ref]?.let {
             Log.d("pv", "request : $it")
             it.httpGet().responseString { req, res, r ->
-                Klaxon().parse<T>(r.get())?.let { callback.invoke(it.right()) }
+                Klaxon().parse<T>(r.get())?.let {
+                    callback.invoke(it.right())
+                } ?: run {
+                    callback.invoke("Parse Error".left())
+                }
             }
         } ?: run {
             callback.invoke("Not found".left())
