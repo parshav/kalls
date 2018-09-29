@@ -7,7 +7,6 @@ import arrow.core.right
 import com.beust.klaxon.Klaxon
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.httpGet
-import kotlin.reflect.KClass
 
 typealias ApiKey = String
 
@@ -78,7 +77,7 @@ class Kalls(baseUrl: String) {
         }
     }*/
 
-    inline fun <reified T> makeKall(ref: String, crossinline callback: (Either<String,T>) -> Unit) {
+    inline fun <reified T> makeKall(ref: String, crossinline callback: (Either<String, T>) -> Unit) {
         sss[ref]?.let {
             Log.d("pv", "request : $it")
             it.httpGet().responseString { req, res, r ->
