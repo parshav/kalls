@@ -2,16 +2,16 @@ package com.pv.networking
 
 import android.util.Log
 import com.pv.networking.Kalls.Companion.self
-import com.pv.networking.launch_return_model.LaunchReturnDataClass
+import com.pv.networking.models.history.HistoryModel
 
 
 typealias launchFunCall = (LaunchReturn) -> Unit
 
 object Networking {
 
-    val api = kall ("https://launchlibrary.net/1.4/") {
+    val api = kall ("https://api.spacexdata.com/v3/") {
 
-        "/launch/next/n" <LaunchReturnDataClass> {
+        "/launch/next/n" <Launch5> {
 
             params["n"] = "10"
 
@@ -23,7 +23,7 @@ object Networking {
 
         } referAs self
 
-        "/missions" <MissionReturn> {
+        "/history/1" <MissionReturn> {
 
 //            handleError = LaunchError
 
@@ -42,7 +42,7 @@ object Networking {
 
         api kall "next five"
 
-        api.makeKall<LaunchReturnDataClass>("next five") {
+        api.makeKall<HistoryModel>("next five") {
             println("makeKall : $it")
         }
       /*  launchCal {
