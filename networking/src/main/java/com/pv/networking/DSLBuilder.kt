@@ -39,21 +39,10 @@ class Kalls(baseUrl: String) {
          return a
      }
  */
-    fun <T : KallRequest> kallRequest(block: Api<T>.() -> Unit): Api<T> {
-        val a = Api<T>("")
-        a.block()
-        apis[a] = " "
-        return a
-    }
 
     infix fun <T> Api<T>.referAs(string: String) {
         sss[string] = this.ext
     }
-
-    fun String.callback(string: String) {
-
-    }
-
 
     fun <T> call(block: (String) -> Unit) {
         val api = Api<T>("")

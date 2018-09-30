@@ -24,13 +24,13 @@ object Networking {
 
         "/history/1"<HistoryModel> {
 
-            //            handleError = LaunchError
+        } referAs "single spacex history"
 
-        } referAs "spacex history"
+        "/history/n" <HistoryModel> {
 
-        val next5 = "launch/next/5"<LaunchReturn> {
+            params["n"] = "1" // default value
 
-        } referAs "next five"
+        } referAs "dynamic spacex history"
     }
 
     fun test() {
@@ -41,7 +41,7 @@ object Networking {
 
         api kall "next five"
 
-        api.makeKall<HistoryModel>("spacex history") {
+        api.makeKall<HistoryModel>("single spacex history") {
             println("makeKall : $it")
         }
         /*  launchCal {
