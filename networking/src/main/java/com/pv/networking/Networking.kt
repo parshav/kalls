@@ -1,5 +1,6 @@
 package com.pv.networking
 
+import android.util.Log
 import com.pv.networking.Kalls.Companion.self
 import com.pv.networking.models.history.HistoryModel
 
@@ -26,36 +27,32 @@ object Networking {
 
         } referAs "single spacex history"
 
-        "/history/n" <HistoryModel> {
+        "/history/{n}"<HistoryModel> {
 
-            params["n"] = "1" // default value
+            handleError = LaunchError
+            parameters["n"] = "1" // default
 
         } referAs "dynamic spacex history"
     }
 
     fun test() {
-
-        /*launchCall {
-            Log.d("pv", "The string is $it")
-        }*/
-
         api kall "next five"
 
-        api.makeKall<HistoryModel>("single spacex history") {
+        api.makeKall<HistoryModel>(
+                "dynamic spacex history",
+                "n" pairWith "2") {
+
             println("makeKall : $it")
         }
-        /*  launchCal {
 
-          }
-          */
-        "hello"
+//        val c = "hello/{m}/helll/{s}".replacePathwithParam(listOf(Pair("m", "haha"), Pair("s","eee")))
+//        Log.d("pv", "Replaced thing = $c")
     }
 
-    fun launchCall(callBack: (String) -> Unit) = api.call<LaunchReturn>(callBack)
+//    fun launchCall(callBack: (String) -> Unit) = api.call<LaunchReturn>(callBack)
 
     //    fun launchCal(callBack: (Pair<Boolean, LaunchReturn>) -> Unit) = api.call2(callBack)
     fun authCall() = api.sss["LSD"]
-
 }
 
 data class LaunchReturn(val string: String)
