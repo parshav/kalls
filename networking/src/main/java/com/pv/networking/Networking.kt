@@ -1,6 +1,7 @@
 package com.pv.networking
 
 import android.util.Log
+import arrow.core.Either
 import com.pv.networking.Kalls.Companion.self
 import com.pv.networking.models.history.HistoryModel
 
@@ -52,6 +53,7 @@ object Networking {
     fun authCall() = api.sss["LSD"]
 }
 
+typealias Kallback<T> = (Either<String, T>) -> Unit
 data class LaunchReturn(val string: String)
 data class MissionReturn(val string: String)
 

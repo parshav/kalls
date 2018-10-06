@@ -7,7 +7,7 @@ import com.github.kittinunf.fuel.core.FuelManager
 
 typealias ApiKey = String
 
-class Kalls(baseUrl: String) {
+open class Kalls(baseUrl: String) {
 
     companion object {
         const val self = "kalls kalls"
