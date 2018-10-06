@@ -4,20 +4,17 @@ import android.util.Log
 import arrow.core.Either
 import arrow.core.left
 import com.github.kittinunf.fuel.core.FuelManager
+import kotlin.reflect.KClass
 
 typealias ApiKey = String
 
 open class Kalls(baseUrl: String) {
 
-    companion object {
-        const val self = "kalls kalls"
-    }
-
     val apis = mutableMapOf<Api2, String>()
     val sips = mutableMapOf<String, Api2>()
+    val Attempt = mutableMapOf<Any, String>()
 
     val sss = mutableMapOf<String, String>()
-    val params = mutableMapOf<String, String>()
 
 
     init {
@@ -36,6 +33,7 @@ open class Kalls(baseUrl: String) {
         a.block()
         apis[a] = this
         sips[this] = a
+        Attempt[T::class.java] = this
         return a
     }
 
@@ -72,6 +70,11 @@ open class Kalls(baseUrl: String) {
             })
         }
     }*/
+
+    inline fun<reified T> testCall() {
+        val c= Attempt[T::class.java]
+        println("")
+    }
 
     inline fun <reified T> makeKall(ref: String, vararg params: Pair<String, String>, crossinline callback: (Either<String, T>) -> Unit) {
 

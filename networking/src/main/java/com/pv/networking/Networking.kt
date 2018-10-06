@@ -2,7 +2,6 @@ package com.pv.networking
 
 import android.util.Log
 import arrow.core.Either
-import com.pv.networking.Kalls.Companion.self
 import com.pv.networking.models.history.HistoryModel
 
 
@@ -14,11 +13,11 @@ object Networking {
 
         "/launches"<Launch5> {
 
-            "latest" <Launch5> {
+            "latest"<Launch5> {
 
             } referAs "latest launch"
 
-            "next" <Launch5> {
+            "next"<Launch5> {
 
             } referAs "next launch"
 
@@ -45,6 +44,8 @@ object Networking {
 
             Log.d("pv", "makeKall : $it")
         }
+
+        api.testCall<Launch5>()
     }
 
 //    fun launchCall(callBack: (String) -> Unit) = api.call<LaunchReturn>(callBack)
@@ -54,6 +55,7 @@ object Networking {
 }
 
 typealias Kallback<T> = (Either<String, T>) -> Unit
+
 data class LaunchReturn(val string: String)
 data class MissionReturn(val string: String)
 
