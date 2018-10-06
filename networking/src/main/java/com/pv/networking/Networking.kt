@@ -11,17 +11,17 @@ object Networking {
 
     val api = kall("https://api.spacexdata.com/v3") {
 
-        "/launch/next/n"<Launch5> {
+        "/launches"<Launch5> {
 
-            params["n"] = "10"
+            "latest" <Launch5> {
 
-            ""<Launch5> {
+            } referAs "latest launch"
 
-                params["n"] = "5"
+            "next" <Launch5> {
 
-            } referAs "five launches"
+            } referAs "next launch"
 
-        } referAs self
+        } referAs "launches"
 
         "/history/1"<HistoryModel> {
 
@@ -42,11 +42,8 @@ object Networking {
                 "dynamic spacex history",
                 "n" pairWith "2") {
 
-            println("makeKall : $it")
+            Log.d("pv", "makeKall : $it")
         }
-
-//        val c = "hello/{m}/helll/{s}".replacePathwithParam(listOf(Pair("m", "haha"), Pair("s","eee")))
-//        Log.d("pv", "Replaced thing = $c")
     }
 
 //    fun launchCall(callBack: (String) -> Unit) = api.call<LaunchReturn>(callBack)

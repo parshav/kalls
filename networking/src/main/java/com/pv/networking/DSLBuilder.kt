@@ -4,7 +4,6 @@ import android.util.Log
 import arrow.core.Either
 import arrow.core.left
 import com.github.kittinunf.fuel.core.FuelManager
-import com.github.kittinunf.fuel.httpGet
 
 typealias ApiKey = String
 
@@ -77,6 +76,7 @@ class Kalls(baseUrl: String) {
     inline fun <reified T> makeKall(ref: String, vararg params: Pair<String, String>, crossinline callback: (Either<String, T>) -> Unit) {
 
         var paramList = mutableListOf<Pair<String, String>>()
+        var innnerApi = ""
         sss[ref]?.let { path ->
             sips[path]?.let { api2 ->
                 paramList = params.filter { api2.parameters.containsKey(it.first) }.toMutableList()
@@ -85,6 +85,7 @@ class Kalls(baseUrl: String) {
             }
 
             Log.d("pv", "request : ${path.replacePathwithParam(paramList)}")
+
             /*it.httpGet().responseString { req, res, r ->
                 Klaxon().parse<T>(r.get())?.let {
                     callback.invoke(it.right())
@@ -97,7 +98,7 @@ class Kalls(baseUrl: String) {
         }
     }
 
-    fun String.replacePathwithParam(param: List<Pair<String,String>>): String {
+    fun String.replacePathwithParam(param: List<Pair<String, String>>): String {
         var mut = this
         param.forEach {
             mut = mut.replace("{${it.first}}", it.second)
@@ -125,6 +126,20 @@ class Api2(val ext: String) {
 
     lateinit var handleError: Error
     val parameters = mutableMapOf<String, String>()
+    val innerApis = mutableMapOf<String, InnerApi>()
+
+    inline operator fun <reified T> String.invoke(block: InnerApi.() -> (Unit)): Api2 {
+        val inner = InnerApi(this)
+        inner.block()
+        innerApis[this] = inner
+        return this@Api2
+    }
+}
+
+class InnerApi(val ext: String) {
+
+    val params = mutableMapOf<String, String>()
+
 
 }
 
