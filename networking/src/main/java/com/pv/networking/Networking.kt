@@ -34,7 +34,6 @@ object Networking {
     }
 
     fun test() {
-        api kall "next five"
 
         historyFor(1) {
             it.fold(
