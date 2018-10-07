@@ -1,6 +1,5 @@
 package com.pv.networking
 
-import android.util.Log
 import arrow.core.left
 import arrow.core.right
 import com.beust.klaxon.Klaxon
@@ -11,7 +10,7 @@ open class Kalls(baseUrl: String) {
 
     val apis = mutableMapOf<Api2, String>()
     val sips = mutableMapOf<String, Api2>()
-    val Attempt = mutableMapOf<Any, String>()
+    val typeToPath = mutableMapOf<Any, String>()
 
     val sss = mutableMapOf<String, String>()
     val referToApi2 = mutableMapOf<String, Api2>()
@@ -24,8 +23,8 @@ open class Kalls(baseUrl: String) {
         val a = Api2(this)
         a.block()
         apis[a] = this
+        typeToPath[T::class.java] = this
         sips[this] = a
-        Attempt[T::class.java] = this
         return a
     }
 
@@ -38,30 +37,40 @@ open class Kalls(baseUrl: String) {
 
     inline fun <reified T> makeKall(ref: String = "", vararg params: Pair<String, String>, crossinline callback: Kallback<T>) {
 
-        val c = Attempt[T::class.java]
-        var paramList = mutableListOf<Pair<String, String>>()
-        var innnerApi = ""
+        var paramList: MutableList<Pair<String, String>>
 
-        sss[if (!ref.isBlank()) ref else c]?.let { path ->
+        typeToPath[T::class.java]?.let { path ->
+            sips[path]?.let { api2 ->
+                paramList = params.filter { api2.parameters.containsKey(it.first) }.toMutableList()
+                callback.invoke(path.replacePathwithParam(paramList).left())
+            } ?: run {
+                callback.invoke("Type mismatch path".left())
+            }
+        } ?: run {
+            callback.invoke("Type mismatch or not found".left())
+        }
+
+        /*sss[if (!ref.isBlank()) ref else c]?.let { path ->
             sips[path]?.let { api2 ->
                 paramList = params.filter { api2.parameters.containsKey(it.first) }.toMutableList()
             } ?: run {
                 Log.d("pv", "no params found")
             }
 
-            Log.d("pv", "request : ${path.replacePathwithParam(paramList)}")
-
-            kall(path, callback)
-
+//            kall(path.replacePathwithParam(paramList), callback)
+            callback.invoke(path.replacePathwithParam(paramList).left())
         } ?: run {
-            callback.invoke("Not found".left())
-        }
+            if (c == null)
+                callback.invoke("Type Mismatch".left())
+            else
+                callback.invoke("Reference not found".left())
+        }*/
     }
 
     inline fun <reified T> makeKallGroup(ref: String, inner: String, crossinline callback: Kallback<T>) {
         referToApi2[ref]?.let { api2 ->
             api2.referToInner[inner]?.let { inner ->
-//                kall(api2.ext + inner.ext, kallback = callback)
+                //                kall(api2.ext + inner.ext, kallback = callback)
                 callback.invoke((api2.ext + inner.ext).left())
             } ?: run {
                 callback.invoke("Didn't find inner".left())
@@ -73,11 +82,18 @@ open class Kalls(baseUrl: String) {
 
     inline fun <reified T> kall(path: String, crossinline kallback: Kallback<T>) {
         path.httpGet().responseString { req, res, r ->
-            Klaxon().parse<T>(r.get())?.let {
-                kallback.invoke(it.right())
-            } ?: run {
-                kallback.invoke("Parse Error".left())
-            }
+            r.fold(
+                    { respString ->
+                        Klaxon().parse<T>(respString)?.let {
+                            kallback.invoke(it.right())
+                        } ?: run {
+                            kallback.invoke("Parse Error".left())
+                        }
+                    },
+                    {
+                        kallback.invoke("Fuel Error ${it.exception}".left())
+                    }
+            )
         }
     }
 

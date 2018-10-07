@@ -25,43 +25,48 @@ object Networking {
 
         } referAs "launches"
 
-        "/history/1"<SingleHistoryModel> {
-
-        } referAs "single spacex history"
-
-        "/history/{n}"<DynamicHistoryModel> {
+        "/history/{n}"<HistoryModel> {
 
             handleError = LaunchError
             parameters["n"] = "1" // default
 
-        } referAs "dynamic spacex history"
+        }
     }
 
     fun test() {
         api kall "next five"
 
-        /*api.makeKall<SingleHistoryModel>(
-                "dynamic spacex history",
-                "n" pairWith "2") {
-
-            Log.d("pv", "makeKall : $it")
-        }*/
+        historyFor(1) {
+            it.fold(
+                    {
+                        Log.d("pv", "Error in History $it")
+                    },
+                    {
+                        Log.d("pv", "HustoryModel Returned boi")
+                    }
+            )
+        }
 
         latestLaunch {
-            it.fold({
-                Log.d("pv", "error in latest launch $it")
-            }, {
-                Log.d("pv", "LatestLaunchModelReturned boiz")
-            })
+            it.fold(
+                    {
+                        Log.d("pv", "Error in latest launch $it")
+                    },
+                    {
+                        Log.d("pv", "LatestLaunchModel Returned boi")
+                    }
+            )
         }
     }
 
-    fun latestLaunch(callback: Kallback<LatestLaunchModel>)
-            = api.makeKallGroup("launches", "latest", callback)
-//    fun launchCall(callBack: (String) -> Unit) = api.call<LaunchReturn>(callBack)
+    fun latestLaunch(callback: Kallback<LatestLaunchModel>) =
+            api.makeKallGroup("launches", "latest", callback)
 
-    //    fun launchCal(callBack: (Pair<Boolean, LaunchReturn>) -> Unit) = api.call2(callBack)
-    fun authCall() = api.sss["LSD"]
+    fun historyFor(number: Int, calback: Kallback<HistoryModel>) =
+            api.makeKall(
+                    params = *arrayOf("n" pairWith number.toString()),
+                    callback = calback
+            )
 }
 
 typealias Kallback<T> = (Either<String, T>) -> Unit
@@ -69,9 +74,6 @@ typealias Kallback<T> = (Either<String, T>) -> Unit
 
 typealias NextLaunchModel = LaunchModel
 typealias LatestLaunchModel = LaunchModel
-
-typealias SingleHistoryModel = HistoryModel
-typealias DynamicHistoryModel = HistoryModel
 
 data class LaunchReturn(val string: String)
 
