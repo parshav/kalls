@@ -5,6 +5,7 @@ import arrow.core.Either
 import arrow.core.None
 import com.pv.networking.models.history.HistoryModel
 import com.pv.networking.models.launches.LaunchModel
+import com.pv.networking.models.roadster.RoadsterModel
 
 object Networking {
 
@@ -24,8 +25,11 @@ object Networking {
 
         "/history/{n}"<HistoryModel> {
 
-            handleError = LaunchError
             parameters["n"] = "1" // default
+
+        }
+
+        "/roadster"<RoadsterModel> {
 
         }
     }
@@ -58,11 +62,14 @@ object Networking {
     fun latestLaunch(callback: Kallback<LatestLaunchModel>) =
             api.makeKallGroup("launches", "latest", callback)
 
-    fun historyFor(number: Int, calback: Kallback<HistoryModel>) =
+    fun historyFor(number: Int, callback: Kallback<HistoryModel>) =
             api.makeKall(
                     params = *arrayOf("n" pairWith number.toString()),
-                    callback = calback
+                    callback = callback
             )
+
+    fun roadster(callback: Kallback<RoadsterModel>) =
+            api.makeKall(callback = callback)
 }
 
 typealias Kallback<T> = (Either<String, T>) -> Unit
