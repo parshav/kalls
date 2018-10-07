@@ -8,33 +8,33 @@ import com.github.kittinunf.fuel.httpGet
 
 open class Kalls(baseUrl: String) {
 
-    val pathToApi2 = mutableMapOf<String, Api2>()
+    val pathToApi = mutableMapOf<String, Api>()
     val typeToPath = mutableMapOf<Any, String>()
-    val referToApi2 = mutableMapOf<String, Api2>()
+    val referToApi = mutableMapOf<String, Api>()
 
     init {
         FuelManager.instance.basePath = baseUrl
     }
 
-    inline operator fun <reified T> String.invoke(block: Api2.() -> (Unit)): Api2 {
-        val a = Api2(this)
+    inline operator fun <reified T> String.invoke(block: Api.() -> (Unit)): Api {
+        val a = Api(this)
         a.block()
         typeToPath[T::class.java] = this
-        pathToApi2[this] = a
+        pathToApi[this] = a
         return a
     }
 
-    infix fun Api2.referAs(string: String) {
-        referToApi2[string] = this
+    infix fun Api.referAs(string: String) {
+        referToApi[string] = this
     }
 
-    inline fun <reified T> makeKall(ref: String = "", vararg params: Pair<String, String>, crossinline callback: Kallback<T>) {
+    inline fun <reified T> makeKall(vararg params: Pair<String, String>, crossinline callback: Kallback<T>) {
 
         var paramList: MutableList<Pair<String, String>>
 
         typeToPath[T::class.java]?.let { path ->
-            pathToApi2[path]?.let { api2 ->
-                paramList = params.filter { api2.parameters.containsKey(it.first) }.toMutableList()
+            pathToApi[path]?.let { api ->
+                paramList = params.filter { api.parameters.containsKey(it.first) }.toMutableList()
                 callback.invoke(path.replacePathwithParam(paramList).left())
             } ?: run {
                 callback.invoke("Type mismatch path".left())
@@ -45,10 +45,10 @@ open class Kalls(baseUrl: String) {
     }
 
     inline fun <reified T> makeKallGroup(ref: String, inner: String, crossinline callback: Kallback<T>) {
-        referToApi2[ref]?.let { api2 ->
-            api2.referToInner[inner]?.let { inner ->
-                //                kall(api2.ext + inner.ext, kallback = callback)
-                callback.invoke((api2.ext + inner.ext).left())
+        referToApi[ref]?.let { api ->
+            api.referToInner[inner]?.let { inner ->
+                //                kall(api.ext + inner.ext, kallback = callback)
+                callback.invoke((api.ext + inner.ext).left())
             } ?: run {
                 callback.invoke("Didn't find inner".left())
             }
@@ -87,12 +87,7 @@ open class Kalls(baseUrl: String) {
     }
 }
 
-class Api<T>(
-        val ext: String
-) {
-}
-
-class Api2(val ext: String) {
+class Api(val ext: String) {
 
     lateinit var handleError: Error
     val parameters = mutableMapOf<String, String>()
@@ -112,7 +107,6 @@ class Api2(val ext: String) {
 class InnerApi(val ext: String) {
 
     val params = mutableMapOf<String, String>()
-
 }
 
 infix fun String.pairWith(with: String) = Pair(this, with)
