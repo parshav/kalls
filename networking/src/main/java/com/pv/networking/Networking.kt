@@ -2,7 +2,9 @@ package com.pv.networking
 
 import android.util.Log
 import arrow.core.Either
+import arrow.core.None
 import com.pv.networking.models.history.HistoryModel
+import com.pv.networking.models.launches.LaunchModel
 
 
 typealias launchFunCall = (LaunchReturn) -> Unit
@@ -11,23 +13,23 @@ object Networking {
 
     val api = kall("https://api.spacexdata.com/v3") {
 
-        "/launches"<Launch5> {
+        "/launches"<None> {
 
-            "latest"<Launch5> {
+            "/latest"<LatestLaunchModel> {
 
-            } referAs "latest launch"
+            } referAs "latest"
 
-            "next"<Launch5> {
+            "/next"<NextLaunchModel> {
 
-            } referAs "next launch"
+            } referAs "next"
 
         } referAs "launches"
 
-        "/history/1"<HistoryModel> {
+        "/history/1"<SingleHistoryModel> {
 
         } referAs "single spacex history"
 
-        "/history/{n}"<HistoryModel> {
+        "/history/{n}"<DynamicHistoryModel> {
 
             handleError = LaunchError
             parameters["n"] = "1" // default
@@ -38,16 +40,24 @@ object Networking {
     fun test() {
         api kall "next five"
 
-        api.makeKall<HistoryModel>(
+        /*api.makeKall<SingleHistoryModel>(
                 "dynamic spacex history",
                 "n" pairWith "2") {
 
             Log.d("pv", "makeKall : $it")
-        }
+        }*/
 
-        api.testCall<Launch5>()
+        latestLaunch {
+            it.fold({
+                Log.d("pv", "error in latest launch $it")
+            }, {
+                Log.d("pv", "LatestLaunchModelReturned boiz")
+            })
+        }
     }
 
+    fun latestLaunch(callback: Kallback<LatestLaunchModel>)
+            = api.makeKallGroup("launches", "latest", callback)
 //    fun launchCall(callBack: (String) -> Unit) = api.call<LaunchReturn>(callBack)
 
     //    fun launchCal(callBack: (Pair<Boolean, LaunchReturn>) -> Unit) = api.call2(callBack)
@@ -56,8 +66,14 @@ object Networking {
 
 typealias Kallback<T> = (Either<String, T>) -> Unit
 
+
+typealias NextLaunchModel = LaunchModel
+typealias LatestLaunchModel = LaunchModel
+
+typealias SingleHistoryModel = HistoryModel
+typealias DynamicHistoryModel = HistoryModel
+
 data class LaunchReturn(val string: String)
-data class MissionReturn(val string: String)
 
 typealias Launch5 = LaunchReturn
 

@@ -1,12 +1,11 @@
 package com.pv.networking
 
 import android.util.Log
-import arrow.core.Either
 import arrow.core.left
+import arrow.core.right
+import com.beust.klaxon.Klaxon
 import com.github.kittinunf.fuel.core.FuelManager
-import kotlin.reflect.KClass
-
-typealias ApiKey = String
+import com.github.kittinunf.fuel.httpGet
 
 open class Kalls(baseUrl: String) {
 
@@ -15,18 +14,11 @@ open class Kalls(baseUrl: String) {
     val Attempt = mutableMapOf<Any, String>()
 
     val sss = mutableMapOf<String, String>()
-
+    val referToApi2 = mutableMapOf<String, Api2>()
 
     init {
         FuelManager.instance.basePath = baseUrl
     }
-
-    /*operator fun <T> String.invoke(block: Api<T>.() -> (Unit)): Api<T> {
-        val a = Api<T>(this)
-        a.block()
-        apis[a] = this
-        return a
-    }*/
 
     inline operator fun <reified T> String.invoke(block: Api2.() -> (Unit)): Api2 {
         val a = Api2(this)
@@ -37,50 +29,20 @@ open class Kalls(baseUrl: String) {
         return a
     }
 
-    /* inline operator fun<reified T> String.invoke(block: Api2.() -> (Unit)): Api2 {
-         val a = Api2(this)
-         val k = Klaxon().parse<T>(" ")
-         sss[this] = a
-         return a
-     }
- */
-
     infix fun Api2.referAs(string: String) {
         sss[string] = this.ext
+        referToApi2[string] = this
     }
+    // if string is pased, look for Api2 object , then generics
+    // else just look for matching
 
-    /*fun <T> call(block: (String) -> Unit) {
-        val api = Api<T>("")
-        apis[api]?.let {
-            block.invoke(it)
-        } ?: run {
-            block.invoke("Not found breh")
-        }
-    }*/
+    inline fun <reified T> makeKall(ref: String = "", vararg params: Pair<String, String>, crossinline callback: Kallback<T>) {
 
-/*    inline fun <reified T> call2(callback: (Pair<Boolean, T>) -> (Unit)) {
-        var ext = ""
-        ext.httpGet().responseString { _, _, r ->
-            r.fold({
-                val k = Klaxon().parse<T>(it)
-                k?.let {
-                }
-            }, {
-
-            })
-        }
-    }*/
-
-    inline fun<reified T> testCall() {
-        val c= Attempt[T::class.java]
-        println("")
-    }
-
-    inline fun <reified T> makeKall(ref: String, vararg params: Pair<String, String>, crossinline callback: (Either<String, T>) -> Unit) {
-
+        val c = Attempt[T::class.java]
         var paramList = mutableListOf<Pair<String, String>>()
         var innnerApi = ""
-        sss[ref]?.let { path ->
+
+        sss[if (!ref.isBlank()) ref else c]?.let { path ->
             sips[path]?.let { api2 ->
                 paramList = params.filter { api2.parameters.containsKey(it.first) }.toMutableList()
             } ?: run {
@@ -89,15 +51,33 @@ open class Kalls(baseUrl: String) {
 
             Log.d("pv", "request : ${path.replacePathwithParam(paramList)}")
 
-            /*it.httpGet().responseString { req, res, r ->
-                Klaxon().parse<T>(r.get())?.let {
-                    callback.invoke(it.right())
-                } ?: run {
-                    callback.invoke("Parse Error".left())
-                }
-            }*/
+            kall(path, callback)
+
         } ?: run {
             callback.invoke("Not found".left())
+        }
+    }
+
+    inline fun <reified T> makeKallGroup(ref: String, inner: String, crossinline callback: Kallback<T>) {
+        referToApi2[ref]?.let { api2 ->
+            api2.referToInner[inner]?.let { inner ->
+//                kall(api2.ext + inner.ext, kallback = callback)
+                callback.invoke((api2.ext + inner.ext).left())
+            } ?: run {
+                callback.invoke("Didn't find inner".left())
+            }
+        } ?: run {
+            callback.invoke("Didn't find API2".left())
+        }
+    }
+
+    inline fun <reified T> kall(path: String, crossinline kallback: Kallback<T>) {
+        path.httpGet().responseString { req, res, r ->
+            Klaxon().parse<T>(r.get())?.let {
+                kallback.invoke(it.right())
+            } ?: run {
+                kallback.invoke("Parse Error".left())
+            }
         }
     }
 
@@ -130,12 +110,19 @@ class Api2(val ext: String) {
     lateinit var handleError: Error
     val parameters = mutableMapOf<String, String>()
     val innerApis = mutableMapOf<String, InnerApi>()
+    val referToInner = mutableMapOf<String, InnerApi>()
+    val Attempt = mutableMapOf<Any, String>()
 
-    inline operator fun <reified T> String.invoke(block: InnerApi.() -> (Unit)): Api2 {
+    inline operator fun <reified T> String.invoke(block: InnerApi.() -> (Unit)): InnerApi {
         val inner = InnerApi(this)
         inner.block()
         innerApis[this] = inner
-        return this@Api2
+        Attempt[T::class.java] = this
+        return inner
+    }
+
+    infix fun InnerApi.referAs(string: String) {
+        referToInner[string] = this
     }
 }
 
