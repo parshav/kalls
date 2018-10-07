@@ -96,15 +96,11 @@ class Api2(val ext: String) {
 
     lateinit var handleError: Error
     val parameters = mutableMapOf<String, String>()
-    val innerApis = mutableMapOf<String, InnerApi>()
     val referToInner = mutableMapOf<String, InnerApi>()
-    val Attempt = mutableMapOf<Any, String>()
 
     inline operator fun <reified T> String.invoke(block: InnerApi.() -> (Unit)): InnerApi {
         val inner = InnerApi(this)
         inner.block()
-        innerApis[this] = inner
-        Attempt[T::class.java] = this
         return inner
     }
 
@@ -117,10 +113,7 @@ class InnerApi(val ext: String) {
 
     val params = mutableMapOf<String, String>()
 
-
 }
-
-open class KallRequest
 
 infix fun String.pairWith(with: String) = Pair(this, with)
 
@@ -128,8 +121,4 @@ fun kall(baseUrl: String, block: Kalls.() -> (Unit)): Kalls {
     val kall = Kalls(baseUrl)
     kall.block()
     return kall
-}
-
-fun Kalls.generateRequest(ok: Boolean) {
-
 }

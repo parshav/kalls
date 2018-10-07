@@ -6,9 +6,6 @@ import arrow.core.None
 import com.pv.networking.models.history.HistoryModel
 import com.pv.networking.models.launches.LaunchModel
 
-
-typealias launchFunCall = (LaunchReturn) -> Unit
-
 object Networking {
 
     val api = kall("https://api.spacexdata.com/v3") {
@@ -74,10 +71,5 @@ typealias Kallback<T> = (Either<String, T>) -> Unit
 typealias NextLaunchModel = LaunchModel
 typealias LatestLaunchModel = LaunchModel
 
-data class LaunchReturn(val string: String)
-
-typealias Launch5 = LaunchReturn
-
-data class LaunchRequest(val string: String) : KallRequest()
 
 object LaunchError : Error()

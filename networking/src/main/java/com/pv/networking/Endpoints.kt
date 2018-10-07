@@ -1,17 +1,17 @@
 package com.pv.networking
 
-import arrow.core.some
 import com.pv.networking.models.history.HistoryModel
+import com.pv.networking.models.launches.LaunchModel
 
 object Endpoints : Kalls("https://api.spacexdata.com/v3") {
 
-    private val launches ="/launches"<Launch5> {
+    private val launches = "/launches"<LaunchModel> {
 
-        "latest" <Launch5> {
+        "latest"<LaunchModel> {
 
         } referAs "latest launch"
 
-        "next" <Launch5> {
+        "next"<LaunchModel> {
 
         } referAs "next launch"
 
@@ -30,8 +30,9 @@ object Endpoints : Kalls("https://api.spacexdata.com/v3") {
 
     fun A() {
     }
+
     fun callHistoryForAmount(amount: Int,
-                      callback: Kallback<HistoryModel>) =
+                             callback: Kallback<HistoryModel>) =
             makeKall("dynamic spacex history",
                     "n" pairWith amount.toString(),
                     callback = callback)
