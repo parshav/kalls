@@ -3,18 +3,13 @@ package com.pv.networking
 import arrow.core.left
 import arrow.core.right
 import com.beust.klaxon.Klaxon
-import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.httpGet
 
-open class Kalls(baseUrl: String) {
+open class Kalls(val baseUrl: String) {
 
     val pathToApi = mutableMapOf<String, Api>()
     val typeToPath = mutableMapOf<Any, String>()
     val referToApi = mutableMapOf<String, Api>()
-
-    init {
-        FuelManager.instance.basePath = baseUrl
-    }
 
     inline operator fun <reified T> String.invoke(block: Api.() -> (Unit)): Api {
         val a = Api(this)
@@ -58,7 +53,7 @@ open class Kalls(baseUrl: String) {
     }
 
     inline fun <reified T> kall(path: String, crossinline kallback: Kallback<T>) {
-        path.httpGet().responseString { req, res, r ->
+        (baseUrl + path).httpGet().responseString { req, res, r ->
             r.fold(
                     { respString ->
                         Klaxon().parse<T>(respString)?.let {
