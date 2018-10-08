@@ -1,15 +1,17 @@
 package com.pv.networking
 
 import android.util.Log
-import arrow.core.Either
-import arrow.core.None
+import com.pv.kallsbuilder.Kallback
+import com.pv.kallsbuilder.None
+import com.pv.kallsbuilder.kall
+import com.pv.kallsbuilder.pairWith
 import com.pv.networking.models.history.HistoryModel
 import com.pv.networking.models.launches.LaunchModel
 import com.pv.networking.models.roadster.RoadsterModel
 
 object Networking {
 
-    val api = kall("https://api.spacexdata.com/v3") {
+    private val api = kall("https://api.spacexdata.com/v3") {
 
         "/launches"<None> {
 
@@ -71,9 +73,6 @@ object Networking {
     fun roadster(callback: Kallback<RoadsterModel>) =
             api.makeKall(callback = callback)
 }
-
-typealias Kallback<T> = (Either<String, T>) -> Unit
-
 
 typealias NextLaunchModel = LaunchModel
 typealias LatestLaunchModel = LaunchModel

@@ -1,10 +1,10 @@
 package com.pv.kalls.ui.main
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.pv.kalls.R
 import com.pv.networking.Networking
 
@@ -15,6 +15,7 @@ class MainFragment : Fragment() {
     }
 
     private lateinit var viewModel: MainViewModel
+    val networking = Networking
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -29,7 +30,10 @@ class MainFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        val a = Networking
-        a.test()
+        networking.roadster {
+            it.mapLeft {
+
+            }
+        }
     }
 }

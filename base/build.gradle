@@ -51,4 +51,5 @@ dependencies {
 
     application project(':app')
     feature project(':networking')
+    feature project(':kallsbuilder')
 }

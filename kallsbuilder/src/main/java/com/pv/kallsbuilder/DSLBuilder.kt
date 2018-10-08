@@ -1,5 +1,6 @@
-package com.pv.networking
+package com.pv.kallsbuilder
 
+import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import com.beust.klaxon.Klaxon
@@ -103,6 +104,10 @@ class InnerApi(val ext: String) {
 
     val params = mutableMapOf<String, String>()
 }
+
+typealias Kallback<T> = (Either<String, T>) -> Unit
+
+object None
 
 infix fun String.pairWith(with: String) = Pair(this, with)
 
