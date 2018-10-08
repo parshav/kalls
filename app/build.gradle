@@ -24,6 +24,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
+    dynamicFeatures = [":kallsbuilder"]
+
+
 }
 
 dependencies {
@@ -33,10 +38,10 @@ dependencies {
     implementation project(':networking')
 
     // TODO : Either of these is breaking deps
-    implementation ("android.arch.navigation:navigation-fragment-ktx:$nav_version")
-    implementation ("android.arch.navigation:navigation-ui-ktx:$nav_version")
-    implementation ("android.arch.navigation:navigation-runtime-ktx:$nav_version")
-    implementation ("androidx.core:core-ktx:1.0.0-rc01")
+    implementation("android.arch.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("android.arch.navigation:navigation-ui-ktx:$nav_version")
+    implementation("android.arch.navigation:navigation-runtime-ktx:$nav_version")
+    implementation("androidx.core:core-ktx:1.0.0-rc01")
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'

@@ -33,7 +33,7 @@ object Endpoints : Kalls("https://api.spacexdata.com/v3") {
 
     fun callHistoryForAmount(amount: Int,
                              callback: Kallback<HistoryModel>) =
-            makeKall("dynamic spacex history",
+            makeKall(
                     "n" pairWith amount.toString(),
                     callback = callback)
 }
