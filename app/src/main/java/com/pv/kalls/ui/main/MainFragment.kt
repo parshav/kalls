@@ -1,6 +1,7 @@
 package com.pv.kalls.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,29 @@ class MainFragment : Fragment() {
             it.mapLeft {
 
             }
+        }
+
+        networking.historyFor(1) {
+
+            it.fold(
+                    {
+                        Log.d("pv", "Error in History $it")
+                    },
+                    {
+                        Log.d("pv", "HustoryModel Returned boi")
+                    }
+            )
+        }
+
+        networking.latestLaunch {
+            it.fold(
+                    {
+                        Log.d("pv", "Error in latest launch $it")
+                    },
+                    {
+                        Log.d("pv", "LatestLaunchModel Returned boi")
+                    }
+            )
         }
     }
 }

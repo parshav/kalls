@@ -1,6 +1,5 @@
 package com.pv.networking
 
-import android.util.Log
 import com.pv.kallsbuilder.Kallback
 import com.pv.kallsbuilder.None
 import com.pv.kallsbuilder.kall
@@ -33,31 +32,6 @@ object Networking {
 
         "/roadster"<RoadsterModel> {
 
-        }
-    }
-
-    fun test() {
-
-        historyFor(1) {
-            it.fold(
-                    {
-                        Log.d("pv", "Error in History $it")
-                    },
-                    {
-                        Log.d("pv", "HustoryModel Returned boi")
-                    }
-            )
-        }
-
-        latestLaunch {
-            it.fold(
-                    {
-                        Log.d("pv", "Error in latest launch $it")
-                    },
-                    {
-                        Log.d("pv", "LatestLaunchModel Returned boi")
-                    }
-            )
         }
     }
 
