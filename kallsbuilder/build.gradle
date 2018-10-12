@@ -3,8 +3,6 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 28
-    baseFeature true
-
 
     defaultConfig {
         minSdkVersion 21
@@ -13,21 +11,16 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
 }
 
 dependencies {
-    api 'androidx.appcompat:appcompat:1.0.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.github.kittinunf.fuel:fuel-android:1.13.0' //for Android
+
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation "io.arrow-kt:arrow-core:$arw_version"
     implementation "io.arrow-kt:arrow-syntax:$arw_version"
@@ -37,19 +30,18 @@ dependencies {
     implementation "io.arrow-kt:arrow-instances-data:$arw_version"
     implementation "io.arrow-kt:arrow-effects:$arw_version"
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
-
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
-
-
+    implementation 'com.beust:klaxon:3.0.1'
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha3'
 
-    application project(':app')
-    feature project(':networking')
-    feature project(':kallsbuilder')
+    implementation project(':base')
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    application project(':app')
+}
+
+repositories {
+    jcenter()
 }

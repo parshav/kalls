@@ -28,24 +28,19 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.github.kittinunf.fuel:fuel-android:1.13.0' //for Android
-
-    implementation "io.arrow-kt:arrow-core:$arw_version"
-    implementation "io.arrow-kt:arrow-syntax:$arw_version"
-    implementation "io.arrow-kt:arrow-typeclasses:$arw_version"
     implementation "io.arrow-kt:arrow-data:$arw_version"
-    implementation "io.arrow-kt:arrow-instances-core:$arw_version"
-    implementation "io.arrow-kt:arrow-instances-data:$arw_version"
-    implementation "io.arrow-kt:arrow-effects:$arw_version"
-
-    implementation 'com.google.code.gson:gson:2.8.5'
-
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha3'
 
     implementation project(':base')
+    implementation project(':kallsbuilder')
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 //    application project(':app')
+}
+
+repositories {
+    jcenter()
 }
