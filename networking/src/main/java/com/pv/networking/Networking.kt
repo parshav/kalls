@@ -28,7 +28,11 @@ object Networking {
 
             parameters["n"] = "1" // default
 
-        }
+        } referAs "dynamic history"
+
+        "/history/1"<HistoryModel> {
+
+        } referAs "single history"
 
         "/roadster"<RoadsterModel> {
 
@@ -46,6 +50,19 @@ object Networking {
 
     fun roadster(callback: Kallback<RoadsterModel>) =
             api.makeKall(callback = callback)
+
+    fun dynamicHistory(number: Int, callback: Kallback<HistoryModel>) =
+            api.makeKall(
+                    ref = "dynamic history",
+                    params = *arrayOf("n" pairWith number.toString()),
+                    callback = callback
+            )
+
+    fun singleHistory(callback: Kallback<HistoryModel>) =
+            api.makeKall(
+                    ref = "single history",
+                    callback = callback
+            )
 }
 
 typealias NextLaunchModel = LaunchModel

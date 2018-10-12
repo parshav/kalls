@@ -11,17 +11,36 @@ open class Kalls(val baseUrl: String) {
     val pathToApi = mutableMapOf<String, Api>()
     val typeToPath = mutableMapOf<Any, String>()
     val referToApi = mutableMapOf<String, Api>()
+    val typeToApi = mutableMapOf<Api, Any>()
 
     inline operator fun <reified T> String.invoke(block: Api.() -> (Unit)): Api {
         val a = Api(this)
         a.block()
-        typeToPath[T::class.java] = this
         pathToApi[this] = a
+        typeToPath[T::class.java] = this
+        typeToApi[a] = T::class.java
         return a
     }
 
     infix fun Api.referAs(string: String) {
         referToApi[string] = this
+    }
+
+    inline fun <reified T> makeKall(ref: String, vararg params: Pair<String, String>, callback: Kallback<T>) {
+
+        var paramList: MutableList<Pair<String, String>>
+
+        referToApi[ref]?.let { api ->
+
+            if (typeToApi[api] != T::class.java) {
+                callback.invoke("Type mismatch error".left())
+            } else {
+                paramList = params.filter { api.parameters.containsKey(it.first) }.toMutableList()
+                callback.invoke(api.ext.replacePathwithParam(paramList).left())
+            }
+        } ?: run {
+            callback.invoke("refer not found".left())
+        }
     }
 
     inline fun <reified T> makeKall(vararg params: Pair<String, String>, crossinline callback: Kallback<T>) {
@@ -31,7 +50,8 @@ open class Kalls(val baseUrl: String) {
         typeToPath[T::class.java]?.let { path ->
             pathToApi[path]?.let { api ->
                 paramList = params.filter { api.parameters.containsKey(it.first) }.toMutableList()
-                callback.invoke(path.replacePathwithParam(paramList).left())
+                kall(path.replacePathwithParam(paramList), callback)
+//                callback.invoke(path.replacePathwithParam(paramList).left())  // purely for debug purposes
             } ?: run {
                 callback.invoke("Type mismatch path".left())
             }
@@ -43,8 +63,8 @@ open class Kalls(val baseUrl: String) {
     inline fun <reified T> makeKallGroup(ref: String, inner: String, crossinline callback: Kallback<T>) {
         referToApi[ref]?.let { api ->
             api.referToInner[inner]?.let { inner ->
-                //                kall(api.ext + inner.ext, kallback = callback)
-                callback.invoke((api.ext + inner.ext).left())
+                kall(api.ext + inner.ext, kallback = callback)
+//                callback.invoke((api.ext + inner.ext).left())  // purely for debug purposes
             } ?: run {
                 callback.invoke("Didn't find inner".left())
             }
@@ -88,10 +108,12 @@ class Api(val ext: String) {
     lateinit var handleError: Error
     val parameters = mutableMapOf<String, String>()
     val referToInner = mutableMapOf<String, InnerApi>()
+    val typeToExt = mutableMapOf<Any, String>()
 
     inline operator fun <reified T> String.invoke(block: InnerApi.() -> (Unit)): InnerApi {
         val inner = InnerApi(this)
         inner.block()
+        typeToExt[T::class.java] = this
         return inner
     }
 

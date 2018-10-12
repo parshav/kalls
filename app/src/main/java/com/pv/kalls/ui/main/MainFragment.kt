@@ -31,10 +31,15 @@ class MainFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        networking.roadster {
-            it.mapLeft {
-
-            }
+/*        networking.roadster {
+            it.fold(
+                    {
+                        Log.d("pv", "Error in Roadster $it")
+                    },
+                    {
+                        Log.d("pv", "RoadsterModel Returned")
+                    }
+            )
         }
 
         networking.historyFor(1) {
@@ -44,7 +49,7 @@ class MainFragment : Fragment() {
                         Log.d("pv", "Error in History $it")
                     },
                     {
-                        Log.d("pv", "HustoryModel Returned boi")
+                        Log.d("pv", "HistoryModel Returned boi")
                     }
             )
         }
@@ -56,6 +61,28 @@ class MainFragment : Fragment() {
                     },
                     {
                         Log.d("pv", "LatestLaunchModel Returned boi")
+                    }
+            )
+        }*/
+
+        networking.dynamicHistory(7) {
+            it.fold(
+                    {
+                        Log.d("pv", "Error in dynamic history $it")
+                    },
+                    {
+                        Log.d("pv", "Dynamic history returned boi")
+                    }
+            )
+        }
+
+        networking.singleHistory {
+            it.fold(
+                    {
+                        Log.d("pv", "Error in single history $it")
+                    },
+                    {
+                        Log.d("pv", "Single history returned boi")
                     }
             )
         }
