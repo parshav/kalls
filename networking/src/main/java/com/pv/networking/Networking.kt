@@ -30,10 +30,6 @@ object Networking {
 
         } referAs "dynamic history"
 
-        "/history/1"<HistoryModel> {
-
-        } referAs "single history"
-
         "/roadster"<RoadsterModel> {
 
         }
@@ -55,12 +51,6 @@ object Networking {
             api.makeKall(
                     ref = "dynamic history",
                     params = *arrayOf("n" pairWith number.toString()),
-                    callback = callback
-            )
-
-    fun singleHistory(callback: Kallback<HistoryModel>) =
-            api.makeKall(
-                    ref = "single history",
                     callback = callback
             )
 }

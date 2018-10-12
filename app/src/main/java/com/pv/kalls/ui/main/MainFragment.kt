@@ -31,7 +31,7 @@ class MainFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-/*        networking.roadster {
+        networking.roadster {
             it.fold(
                     {
                         Log.d("pv", "Error in Roadster $it")
@@ -63,7 +63,7 @@ class MainFragment : Fragment() {
                         Log.d("pv", "LatestLaunchModel Returned boi")
                     }
             )
-        }*/
+        }
 
         networking.dynamicHistory(7) {
             it.fold(
@@ -72,17 +72,6 @@ class MainFragment : Fragment() {
                     },
                     {
                         Log.d("pv", "Dynamic history returned boi")
-                    }
-            )
-        }
-
-        networking.singleHistory {
-            it.fold(
-                    {
-                        Log.d("pv", "Error in single history $it")
-                    },
-                    {
-                        Log.d("pv", "Single history returned boi")
                     }
             )
         }
